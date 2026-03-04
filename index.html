@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字库崩了 · 乱码模拟器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #1a1e2b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 16px;
+        }
+        .card {
+            background: #f0f2f5;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 700px;
+            padding: 28px 24px;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #1e2b3a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h1 span {
+            background: #2d3f4f;
+            color: #f0e6d0;
+            font-size: 0.9rem;
+            font-weight: 400;
+            padding: 4px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.5px;
+        }
+        .sub {
+            color: #3d4e5f;
+            margin: 0 0 20px 0;
+            font-size: 0.95rem;
+            border-left: 4px solid #9aa9b7;
+            padding-left: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0 8px 8px 0;
+        }
+        .input-group {
+            margin-bottom: 24px;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f3a4b;
+            display: block;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+        textarea {
+            width: 100%;
+            padding: 16px 18px;
+            font-size: 1.1rem;
+            border: 2px solid #bcccd9;
+            border-radius: 24px;
+            background: #ffffff;
+            resize: vertical;
+            transition: 0.15s;
+            line-height: 1.5;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #5f7a9c;
+            box-shadow: 0 0 0 3px rgba(95, 122, 156, 0.2);
+        }
+        .output-area {
+            background: #e4eaf0;
+            border-radius: 24px;
+            padding: 18px;
+            border: 2px solid #b6c5d4;
+            margin-top: 16px;
+            word-break: break-word;
+            min-height: 120px;
+            font-size: 1.2rem;
+            font-family: 'SF Mono', 'Fira Code', 'Noto Sans SC', monospace;
+            white-space: pre-wrap;
+            color: #0d1c2b;
+        }
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px;
+            margin: 22px 0 10px;
+        }
+        .slider-box {
+            flex: 2;
+            min-width: 200px;
+        }
+        .slider-box label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        input[type=range] {
+            width: 100%;
+            height: 8px;
+            background: #cbd6e3;
+            border-radius: 10px;
+            -webkit-appearance: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #2d4b65;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #f0f4fa;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .prob-value {
+            font-weight: 700;
+            color: #1d3c5b;
+            background: white;
+            padding: 2px 10px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        button {
+            background: #2b4a6b;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 14px 28px;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #0f2537, 0 6px 16px rgba(0,0,0,0.3);
+            transition: 0.06s linear;
+            letter-spacing: 1px;
+            flex: 1;
+            min-width: 150px;
+            border: 1px solid #8faec9;
+        }
+        button:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #0f2537, 0 6px 16px rgba(0,0,0,0.2);
+        }
+        .footer-note {
+            font-size: 0.8rem;
+            color: #4b5f72;
+            margin-top: 24px;
+            text-align: right;
+            border-top: 1px dashed #a5b9cb;
+            padding-top: 12px;
+        }
+        .footer-note code {
+            background: #cfdeed;
+            padding: 3px 8px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🧩 字库崩了 <span>glitch factory</span></h1>
+    <div class="sub">像公交LED屏幕一样，随机吃掉/扭曲字符 —— 故意制造乱码</div>
+
+    <div class="input-group">
+        <label for="inputText">📝 正常文本</label>
+        <textarea id="inputText" rows="3" placeholder="例如：温迪是蒙德的风神。">温迪是蒙德的风神。</textarea>
+    </div>
+
+    <div class="control-panel">
+        <div class="slider-box">
+            <label>
+                <span>💥 崩坏强度</span>
+                <span class="prob-value" id="probDisplay">30%</span>
+            </label>
+            <input type="range" id="glitchProb" min="0" max="100" value="30" step="1">
+        </div>
+        <button id="convertBtn">✨ 转换 · 字库崩坏</button>
+    </div>
+
+    <div>
+        <label>🤖 乱码输出</label>
+        <div class="output-area" id="outputText" aria-label="乱码结果">点击按钮生成乱码</div>
+    </div>
+
+    <div class="footer-note">
+        ⚡ 每次点击随机替换字符 — 模拟字库损坏/信号错乱 <code>“的”可能变“の”</code> <code>“风”变“疯”</code>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // -------------------- 构建「崩坏字符池」----------------------
+        // 包含了数字、字母、日文假名、希腊字母、特殊符号、常见错字、带圈数字等
+        function buildGlitchPool() {
+            const pool = [];
+
+            // 0-9 数字
+            for (let i = 0; i <= 9; i++) pool.push(i.toString());
+
+            // 大写字母 A-Z
+            for (let i = 65; i <= 90; i++) pool.push(String.fromCharCode(i));
+
+            // 小写字母 a-z
+            for (let i = 97; i <= 122; i++) pool.push(String.fromCharCode(i));
+
+            // 常见英文标点 + 中文标点 (手动添加一些容易混淆的)
+            const punctuations = [
+                '，', '。', '！', '？', '；', '：', '“', '”', '‘', '’',
+                '（', '）', '【', '】', '《', '》', '…', '—', '～', 
+                '@', '#', '$', '%', '^', '&', '*', '+', '=', '|', '/', '\\'
+            ];
+            punctuations.forEach(p => pool.push(p));
+
+            // 日文平假名 & 片假名 (常用)
+            const hiragana = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';
+            const katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            for (let ch of hiragana) pool.push(ch);
+            for (let ch of katakana) pool.push(ch);
+
+            // 希腊字母 (小写常用)
+            const greek = 'αβγδεζηθικλμνξοπρστυφχψω';
+            for (let ch of greek) pool.push(ch);
+
+            // 特殊符号 / 装饰符号
+            const specials = '★☆♠♣♥♦☀☁☂☃☄♫♪☯☮☸⚡❄❅❆⭐︎🌙☕⚓⚔⚖⚠⛔⏰⌛';
+            for (let ch of specials) pool.push(ch);
+
+            // 带圈数字 / 括号数字 (制造混乱)
+            const circled = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳⓪';
+            for (let ch of circled) pool.push(ch);
+
+            // 一些常见汉字错别字 / 同音 / 形近 (结合例子)
+            const commonGlitchHan = [
+                '问', '迪', '十', '的', 'の',  // の是日文，但常用作错误替代
+                '疯', '蒙', '德', '风', '神',
+                '再', '在', '得', '地', '他', '她', '它',
+                '哪', '那', '可', '呵', '和', '合', '会', '回',
+                '上', '下', '左', '右', '大', '太', '犬',
+                '日', '曰', '人', '入', '八', '九', '几',
+                '几', '九', '力', '刀', '刃', '又', '叉',
+                '王', '玉', '主', '生', '牛', '午', '未',
+                '末', '本', '术', '未', '末', '东', '乐',
+                '车', '东', '练', '炼', '已', '己', '巳'
+            ];
+            commonGlitchHan.forEach(ch => pool.push(ch));
+
+            // 再加一些随机常用汉字 (从常用字频率表里摘)
+            const extraHan = '的一是了不在有个人这上中大为和之国地到以说时他要她看们生对下可';
+            for (let ch of extraHan) pool.push(ch);
+
+            // 去掉可能的重复（虽然重复没影响，但保持干净）
+            return [...new Set(pool)];
+        }
+
+        const glitchPool = buildGlitchPool();
+        console.log('故障池大小:', glitchPool.length); // 大约200+
+
+        // ----- 获取元素 -----
+        const inputText = document.getElementById('inputText');
+        const outputDiv = document.getElementById('outputText');
+        const convertBtn = document.getElementById('convertBtn');
+        const probSlider = document.getElementById('glitchProb');
+        const probDisplay = document.getElementById('probDisplay');
+
+        // 概率显示更新
+        probSlider.addEventListener('input', function(e) {
+            probDisplay.textContent = e.target.value + '%';
+        });
+
+        // ---------- 核心转换函数 ----------
+        function glitchify(text, probability) {
+            if (!text) return '';
+            let result = '';
+            for (let char of text) {
+                // 空格、制表符、换行符可以保留原样 (你也可以选择让空格也被替换，但通常保持原样更自然)
+                if (char === ' ' || char === '\t' || char === '\n' || char === '\r') {
+                    result += char;
+                    continue;
+                }
+
+                const rnd = Math.random() * 100; // 0-100
+                if (rnd < probability) {
+                    // 随机从故障池里捞一个字符
+                    const randomIndex = Math.floor(Math.random() * glitchPool.length);
+                    result += glitchPool[randomIndex];
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        // 转换并显示
+        function convertAndShow() {
+            const original = inputText.value;
+            const prob = parseFloat(probSlider.value); // 已经是0-100
+            const glitched = glitchify(original, prob);
+            outputDiv.textContent = glitched;
+        }
+
+        // 初始显示一次 (用默认内容演示)
+        window.addEventListener('load', () => {
+            convertAndShow();
+        });
+
+        // 点击按钮转换
+        convertBtn.addEventListener('click', convertAndShow);
+
+        // 可选：输入框按 Ctrl+Enter 也可以转换
+        inputText.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                convertAndShow();
+            }
+        });
+    })();
+</script>
+</body>
+</html>
